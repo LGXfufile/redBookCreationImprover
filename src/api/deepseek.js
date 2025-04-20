@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// 使用您的 API 密钥
-const API_KEY = 'sk-0f69d5e4890f450d9b958d6ad9e19c7e';
+// 获取API密钥，优先使用环境变量，支持Vercel部署
+const API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || 'sk-0f69d5e4890f450d9b958d6ad9e19c7e';
 // 修改为正确的 API URL
 const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
@@ -14,6 +14,14 @@ let isUsingFallback = false;
 let lastApiCallTime = null;
 let apiCallCount = 0;
 let lastErrorMessage = '';
+
+// 打印API配置信息（不包括密钥）
+console.log('API配置信息:', {
+  apiUrl: API_URL,
+  useEnvironmentKey: !!import.meta.env.VITE_DEEPSEEK_API_KEY,
+  forceApi: FORCE_API,
+  apiKeyConfigured: !!API_KEY && API_KEY.length > 10
+});
 
 // 添加一个简单的网络连接测试
 const testNetworkConnection = async (timeout = 5000) => {
