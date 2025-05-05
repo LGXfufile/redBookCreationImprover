@@ -37,6 +37,7 @@
           <div class="form-group">
             <label for="targetAudience">{{ $t('generator.targetAudience') }}</label>
             <el-select v-model="formData.targetAudience" class="select-full-width" id="targetAudience">
+              <el-option value="大学老师" label="大学老师" />
               <el-option value="女性用户" label="女性用户" />
               <el-option value="男性用户" label="男性用户" />
               <el-option value="年轻人" label="年轻人" />
@@ -64,6 +65,7 @@
             <label for="creator">{{ $t('generator.creator') }}</label>
             <el-select v-model="formData.creator" class="select-full-width" id="creator">
               <el-option value="大学老师省特等奖获得者" label="大学老师省特等奖获得者" />
+              <el-option value="浙江省高校思政微课大赛特等奖获得者" label="浙江省高校思政微课大赛特等奖获得者" />
               <el-option value="辣妈生活家" label="辣妈生活家" />
               <el-option value="职场达人" label="职场达人" />
               <el-option value="美妆博主" label="美妆博主" />
@@ -219,8 +221,8 @@ export default defineComponent({
     const formData = ref({
       topic: '',
       keywords: '',
-      targetAudience: '学生党',
-      creator: '大学老师省特等奖获得者',
+      targetAudience: '大学老师',
+      creator: '浙江省高校思政微课大赛特等奖获得者',
       style: '情感共鸣',
       length: '中等'
     });
