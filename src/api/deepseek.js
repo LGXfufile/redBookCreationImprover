@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // 获取API密钥，优先使用环境变量，支持Vercel部署
-const API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || 'sk-0f69d5e4890f450d9b958d6ad9e19c7e';
+const API_KEY = 'sk-0f69d5e4890f450d9b958d6ad9e19c7e';
 // 修改为正确的 API URL
 const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
@@ -58,11 +58,11 @@ export const generateContent = async (params) => {
       throw new Error('主题不能为空');
     }
 
-    // 在发送主请求前先测试网络连接
-    const hasConnection = await testNetworkConnection();
-    if (!hasConnection) {
-      throw new Error('网络连接失败: 无法连接到 DeepSeek API 服务器，请检查您的网络连接');
-    }
+    // // 在发送主请求前先测试网络连接
+    // const hasConnection = await testNetworkConnection();
+    // if (!hasConnection) {
+    //   throw new Error('网络连接失败: 无法连接到 DeepSeek API 服务器，请检查您的网络连接');
+    // }
 
     const prompt = `
       请根据以下信息，为小红书平台创作一篇原创内容。请确保严格使用提供的关键词和主题，不要添加未提及的概念：
@@ -132,6 +132,15 @@ export const generateContent = async (params) => {
       }
     } catch (apiError) {
       console.error('API调用错误详情:', apiError);
+      if (apiError.response) {
+        console.error('API响应内容:', apiError.response.data);
+      }
+      if (apiError.toJSON) {
+        console.error('API错误toJSON:', apiError.toJSON());
+      }
+      if (apiError.config) {
+        console.error('API请求配置:', apiError.config);
+      }
       
       // 处理 API 调用特定错误
       if (apiError.code === 'ENOTFOUND' || apiError.code === 'EAI_AGAIN' || 
