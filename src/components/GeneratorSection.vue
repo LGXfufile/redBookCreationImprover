@@ -63,6 +63,7 @@
           <div class="form-group">
             <label for="creator">{{ $t('generator.creator') }}</label>
             <el-select v-model="formData.creator" class="select-full-width" id="creator">
+              <el-option value="大学老师省特等奖获得者" label="大学老师省特等奖获得者" />
               <el-option value="辣妈生活家" label="辣妈生活家" />
               <el-option value="职场达人" label="职场达人" />
               <el-option value="美妆博主" label="美妆博主" />
@@ -218,8 +219,8 @@ export default defineComponent({
     const formData = ref({
       topic: '',
       keywords: '',
-      targetAudience: '女性用户',
-      creator: '辣妈生活家',
+      targetAudience: '学生党',
+      creator: '大学老师省特等奖获得者',
       style: '情感共鸣',
       length: '中等'
     });

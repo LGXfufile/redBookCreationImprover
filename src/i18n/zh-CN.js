@@ -18,7 +18,7 @@ export default {
     copied: '已复制',
     placeholders: {
       topic: '请输入主题或产品名称',
-      keywords: '可加热、里面填充文字、可以调节高度、定时断电',
+      keywords: '专业，校园主持人大赛一等奖，大学老师',
     },
   },
   sections: {
