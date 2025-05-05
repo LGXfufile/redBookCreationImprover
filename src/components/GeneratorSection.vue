@@ -260,6 +260,9 @@ export default defineComponent({
       // 清除之前的错误
       clearError();
       
+      // 每次点击生成按钮时先清空结果区域
+      result.value = '';
+      
       // 基本表单验证
       if (!formData.value.topic || formData.value.topic.trim() === '') {
         ElMessage.warning('请输入主题/产品名称');
