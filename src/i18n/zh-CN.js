@@ -111,7 +111,7 @@ export default {
     },
   },
   footer: {
-    copyright: '© 2025 李光新 版权所有',
+    copyright: '© 2025 版权所有',
     contactUs: '联系我们',
     privacyPolicy: '隐私政策',
     termsOfService: '服务条款',
