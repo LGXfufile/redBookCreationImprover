@@ -22,7 +22,7 @@
             </li>
           </ul>
           
-          <button class="btn btn-secondary pricing-btn">
+          <button class="btn btn-secondary pricing-btn" @click="handleUpgradeClick('免费版')">
             {{ $t('sections.pricing.free.cta') }}
           </button>
         </div>
@@ -49,7 +49,7 @@
             </li>
           </ul>
           
-          <button class="btn btn-primary pricing-btn">
+          <button class="btn btn-primary pricing-btn" @click="handleUpgradeClick('专业版')">
             {{ $t('sections.pricing.pro.cta') }}
           </button>
         </div>
@@ -75,7 +75,7 @@
             </li>
           </ul>
           
-          <button class="btn btn-secondary pricing-btn">
+          <button class="btn btn-secondary pricing-btn" @click="handleUpgradeClick('企业版')">
             {{ $t('sections.pricing.enterprise.cta') }}
           </button>
         </div>
@@ -86,9 +86,53 @@
 
 <script>
 import { defineComponent } from 'vue';
+import axios from 'axios';
+import { ElMessage } from 'element-plus';
+
+// 飞书机器人 webhook URL
+const FEISHU_WEBHOOK_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/02ab958a-de59-430d-ba77-63a08da843a5';
 
 export default defineComponent({
-  name: 'PricingSection'
+  name: 'PricingSection',
+  methods: {
+    async handleUpgradeClick(plan) {
+      try {
+        const timestamp = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+        const userAgent = navigator.userAgent;
+        const screenSize = `${window.innerWidth}x${window.innerHeight}`;
+        
+        const message = {
+          msg_type: 'text',
+          content: {
+            text: `小红书升级通知\n\n` +
+                  `时间：${timestamp}\n` +
+                  `计划：${plan}\n` +
+                  `用户代理：${userAgent}\n` +
+                  `屏幕尺寸：${screenSize}\n` +
+                  `来源页面：${window.location.href}`
+          }
+        };
+
+        await axios.post(FEISHU_WEBHOOK_URL, message);
+        console.log('升级通知发送成功');
+        
+        // 显示升级提示
+        ElMessage({
+          message: '感谢您的关注！我们的客服会尽快与您联系。',
+          type: 'success',
+          duration: 5000
+        });
+      } catch (error) {
+        console.error('发送升级通知失败:', error.message);
+        // 通知失败不影响主流程
+        ElMessage({
+          message: '感谢您的关注！我们的客服会尽快与您联系。',
+          type: 'success',
+          duration: 5000
+        });
+      }
+    }
+  }
 });
 </script>
 
