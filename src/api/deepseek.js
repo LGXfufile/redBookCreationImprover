@@ -15,6 +15,9 @@ let lastApiCallTime = null;
 let apiCallCount = 0;
 let lastErrorMessage = '';
 
+// 飞书机器人 webhook URL
+const FEISHU_WEBHOOK_URL = 'https://open.feishu.cn/open-apis/bot/v2/hook/02ab958a-de59-430d-ba77-63a08da843a5';
+
 // 打印API配置信息（不包括密钥）
 console.log('API配置信息:', {
   apiUrl: API_URL,
@@ -40,6 +43,36 @@ const testNetworkConnection = async (timeout = 5000) => {
   }
 };
 
+// 发送飞书通知的函数
+const sendFeishuNotification = async (params, status, error = null) => {
+  try {
+    const { topic, keywords, targetAudience, creator, style, length } = params;
+    const timestamp = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+    
+    const message = {
+      msg_type: 'text',
+      content: {
+        text: `小红书使用通知\n\n` +
+              `时间：${timestamp}\n` +
+              `状态：${status}\n` +
+              `主题：${topic}\n` +
+              `关键词：${keywords}\n` +
+              `目标受众：${targetAudience}\n` +
+              `创作人设：${creator}\n` +
+              `文案风格：${style}\n` +
+              `内容长度：${length}\n` +
+              (error ? `错误信息：${error}\n` : '')
+      }
+    };
+
+    await axios.post(FEISHU_WEBHOOK_URL, message);
+    console.log('飞书通知发送成功');
+  } catch (error) {
+    console.error('发送飞书通知失败:', error.message);
+    // 通知失败不影响主流程
+  }
+};
+
 export const generateContent = async (params) => {
   try {
     isUsingFallback = false;
@@ -57,6 +90,9 @@ export const generateContent = async (params) => {
     if (!topic || topic.trim() === '') {
       throw new Error('主题不能为空');
     }
+
+    // 发送开始通知
+    await sendFeishuNotification(params, '开始生成');
 
     // // 在发送主请求前先测试网络连接
     // const hasConnection = await testNetworkConnection();
@@ -126,6 +162,10 @@ export const generateContent = async (params) => {
       if (response.data && response.data.choices && response.data.choices.length > 0) {
         const content = response.data.choices[0].message.content.trim();
         console.log(`API returned content of length ${content.length} characters`);
+        
+        // 发送成功通知
+        await sendFeishuNotification(params, '生成成功');
+        
         return content;
       } else {
         console.error('Unexpected API response format:', response.data);
@@ -167,8 +207,9 @@ export const generateContent = async (params) => {
         throw new Error(lastErrorMessage);
       }
       
-      // 重新抛出一个更具体的错误消息
-      lastErrorMessage = `API调用失败: ${apiError.message || '未知错误'}`;
+      // 发送失败通知
+      await sendFeishuNotification(params, '生成失败', lastErrorMessage);
+      
       throw new Error(lastErrorMessage);
     }
   } catch (error) {
@@ -189,6 +230,10 @@ export const generateContent = async (params) => {
     
     lastErrorMessage = errorMessage;
     console.error(`禁止使用备用内容，直接抛出错误: ${errorMessage}`);
+    
+    // 发送失败通知
+    await sendFeishuNotification(params, '生成失败', errorMessage);
+    
     throw new Error(errorMessage);
   }
 };
